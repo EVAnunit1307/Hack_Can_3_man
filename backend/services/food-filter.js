@@ -15,7 +15,7 @@ const FOOD_LABELS = new Set([
   'scallop', 'seafood', 'sesame', 'shallot', 'soup', 'sour-cream', 'soy-sauce', 'spinach', 'squash',
   'steak', 'strawberry', 'sugar', 'sushi', 'sweet-potato', 'taco', 'tarragon', 'tea', 'thyme', 'toast',
   'tofu', 'tomato', 'tortilla', 'tuna', 'turkey', 'turnip', 'vanilla', 'vinegar', 'waffle', 'walnut',
-  'watermelon', 'wine', 'yogurt', 'zucchini',
+  'watermelon', 'wine', 'yogurt', 'zucchini', 'corn',
 ]);
 
 const MIN_CONFIDENCE = 0.6;

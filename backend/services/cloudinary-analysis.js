@@ -89,6 +89,7 @@ async function analyzeImageContent(imageUrl) {
 
   try {
     const captionRes = await analyzeRequest('captioning', { source });
+    console.log('[cloudinary] Full captioning response:', JSON.stringify(captionRes, null, 2));
     const capData = captionRes?.data?.analysis?.data;
     if (capData?.caption) result.caption = capData.caption;
   } catch (err) {
@@ -98,6 +99,7 @@ async function analyzeImageContent(imageUrl) {
 
   try {
     const lvisRes = await analyzeRequest('lvis', { source });
+    console.log('[cloudinary] Full LVIS response:', JSON.stringify(lvisRes, null, 2));
     result.foodDetected = extractFoodDetections(lvisRes);
   } catch {
     // lvis optional

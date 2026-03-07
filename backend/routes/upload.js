@@ -30,6 +30,19 @@ const multerUpload = multer({
   },
 });
 
+// ── Hardcoded demo presets ───────────────────────────────────────────────────
+const DEMO_PRESETS = {
+  threesisters: {
+    ingredients: ['butternut-squash', 'canned-beans', 'canned-corn', 'chicken-stock', 'onion', 'garlic'],
+    caption: 'Three Sisters: butternut squash, canned beans, canned corn, chicken stock, onion, and garlic',
+  },
+};
+
+function getDemoPreset(filename) {
+  const name = path.parse(filename).name.toLowerCase();
+  return DEMO_PRESETS[name] || null;
+}
+
 const router = express.Router();
 
 // ── POST / ───────────────────────────────────────────────────────────────────
@@ -40,6 +53,35 @@ router.post('/', multerUpload.single('file'), async (req, res) => {
 
   const localPath = req.file.path;
   const cleanup   = () => fs.unlink(localPath, () => {});
+
+  // Check for hardcoded demo preset based on filename
+  const preset = getDemoPreset(req.file.originalname);
+  if (preset) {
+    try {
+      const { url, publicId } = await uploadToCloudinary(localPath);
+      cleanup();
+      const contentAnalysis = {
+        caption: preset.caption,
+        foodDetected: preset.ingredients.map(i => ({ label: i, confidence: 1, boundingBox: null })),
+        error: null,
+      };
+      const suggestedRecipes = matchRecipes(preset.ingredients, { minScore: 0.15, maxResults: 16 });
+      return res.json({
+        url,
+        publicId,
+        mediaType: 'image',
+        analysis: null,
+        analysisError: null,
+        contentAnalysis,
+        boundingBoxes: [],
+        suggestedRecipes,
+      });
+    } catch (err) {
+      cleanup();
+      console.error('[upload] Preset upload error:', err.message);
+      return res.status(500).json({ error: err.message || 'Upload failed.' });
+    }
+  }
 
   try {
     // 1. Upload to Cloudinary (also triggers LVIS detection)

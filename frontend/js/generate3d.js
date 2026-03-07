@@ -1,16 +1,9 @@
-/* global THREE, escapeHtml, INGREDIENT_POSITIONS */
+/* global THREE, escapeHtml, INGREDIENT_POSITIONS, INGREDIENT_SCALES, DEFAULT_SCALE, INGREDIENT_ROTATIONS, DEFAULT_ROTATION */
 'use strict';
 
 const ASSETS_PATH = '/assets/3d';
 const CAMERA_STORAGE_KEY = 'kitchen3d_camera';
 const loader = new THREE.GLTFLoader();
-
-const INGREDIENT_SCALES = {
-  tomato: 1.0,
-  garlic: 0.25,
-  cabbage: 0.8,
-};
-const DEFAULT_SCALE = 0.5;
 
 let scene, camera, renderer, orbitControls, transformControls;
 let ingredientMeshes = [];
@@ -78,6 +71,14 @@ function initScene(container) {
   transformControls.addEventListener('dragging-changed', (event) => {
     orbitControls.enabled = !event.value;
   });
+  // Force uniform scaling — preserve aspect ratio
+  transformControls.addEventListener('objectChange', () => {
+    if (transformControls.mode === 'scale' && transformControls.object) {
+      var s = transformControls.object.scale;
+      var max = Math.max(s.x, s.y, s.z);
+      s.set(max, max, max);
+    }
+  });
   scene.add(transformControls);
 
   // Click to select
@@ -138,7 +139,11 @@ function updatePositionPanel() {
   var lines = ingredientMeshes.map(function (mesh) {
     var label = mesh.userData.slotName || mesh.userData.ingredientName || '?';
     var p = mesh.position;
-    return label + ':  x: ' + p.x.toFixed(4) + ',  y: ' + p.y.toFixed(4) + ',  z: ' + p.z.toFixed(4);
+    var r = mesh.rotation;
+    var s = mesh.scale.x;
+    return label + ':  pos(' + p.x.toFixed(4) + ', ' + p.y.toFixed(4) + ', ' + p.z.toFixed(4) + ')' +
+      '  rot(' + r.x.toFixed(4) + ', ' + r.y.toFixed(4) + ', ' + r.z.toFixed(4) + ')' +
+      '  scale(' + s.toFixed(4) + ')';
   });
   positionPanel.textContent = lines.join('\n');
 }
@@ -198,6 +203,8 @@ function loadIngredient(name, position) {
         const model = gltf.scene;
         model.position.copy(position);
         model.scale.setScalar(INGREDIENT_SCALES[normalizedName] || DEFAULT_SCALE);
+        var rot = INGREDIENT_ROTATIONS[normalizedName] || DEFAULT_ROTATION;
+        model.rotation.set(rot.x, rot.y, rot.z);
         model.traverse((child) => {
           if (child.isMesh) {
             child.castShadow = true;

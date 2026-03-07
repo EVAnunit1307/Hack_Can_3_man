@@ -77,12 +77,20 @@
       if (AkiApp.state.mode3d) {
         AkiApp.state.mode3d = false;
         AkiApp.goTo('kitchen3d');
-        // Wait for layout so container has dimensions before Three.js init
         requestAnimationFrame(() => {
           const container = document.getElementById('kitchen3d-container');
           if (container && window.handleGenerate3d) {
             const bboxes = data.boundingBoxes || [];
-            window.handleGenerate3d(data.imageUrl || '', bboxes, container);
+            // If no bounding boxes but we have foodDetected, pass those as ingredients directly
+            if (!bboxes.length && data.contentAnalysis?.foodDetected?.length) {
+              const presetBoxes = data.contentAnalysis.foodDetected.map(f => ({
+                name: typeof f === 'object' ? f.label : f,
+                confidence: f.confidence || 1,
+              }));
+              window.handleGenerate3d(data.url || '', presetBoxes, container);
+            } else {
+              window.handleGenerate3d(data.url || '', bboxes, container);
+            }
           }
         });
       } else {

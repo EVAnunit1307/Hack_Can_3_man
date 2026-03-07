@@ -14,3 +14,18 @@ var INGREDIENT_POSITIONS = {
   garlic_2:  { x: -1.2885, y: 3.1127, z: -0.0101 },
   cabbage_1: { x: 1.0,     y: 3.1,    z: 0.5    },
 };
+
+// Per-ingredient scale overrides (uniform). Falls back to DEFAULT_SCALE.
+var INGREDIENT_SCALES = {
+  tomato: 1.0,
+  garlic: 0.25,
+  cabbage: 0.8,
+};
+var DEFAULT_SCALE = 0.5;
+
+// Per-ingredient rotation overrides in radians { x, y, z }.
+// Falls back to DEFAULT_ROTATION.
+var INGREDIENT_ROTATIONS = {
+  // e.g. garlic: { x: 0, y: Math.PI / 4, z: 0 },
+};
+var DEFAULT_ROTATION = { x: 0, y: 0, z: 0 };
