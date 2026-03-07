@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const uploadRoute = require('./routes/upload');
 const generate3dRoute = require('./routes/generate3d');
+const storyRoute = require('./routes/story');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,5 +11,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 app.use('/api/upload', uploadRoute);
 app.use('/api/generate3d', generate3dRoute);
+app.use('/api', storyRoute);
 
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));

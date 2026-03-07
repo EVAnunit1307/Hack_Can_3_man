@@ -1,4 +1,50 @@
+function collectIngredients(data) {
+  const seen = new Set();
+  const out = [];
+  for (const b of (data.boundingBoxes || [])) {
+    const name = (b.name || '').toLowerCase();
+    if (name && !seen.has(name)) { seen.add(name); out.push({ name, conf: b.confidence ? Math.round(b.confidence * 100) : null }); }
+  }
+  for (const f of (data.contentAnalysis?.foodDetected || [])) {
+    const name = ((typeof f === 'object' ? f.label : f) || '').toLowerCase();
+    if (name && !seen.has(name)) { seen.add(name); out.push({ name, conf: f.confidence ? Math.round(f.confidence * 100) : null }); }
+  }
+  for (const obj of (data.analysis?.detectedObjects || [])) {
+    const name = (obj || '').toLowerCase();
+    if (name && !seen.has(name)) { seen.add(name); out.push({ name, conf: null }); }
+  }
+  return out;
+}
+
+function renderSuggestedRecipes(suggestedRecipes, detectedIngredients) {
+  if (!suggestedRecipes?.length) return '';
+  const ingredientsStr = (Array.isArray(detectedIngredients) ? detectedIngredients : [])
+    .map((i) => (i && i.name) ? i.name : i).filter(Boolean).join(',');
+  return `
+    <div class="suggested-recipes" data-detected-ingredients="${escapeHtml(ingredientsStr)}">
+      <h2 class="suggested-recipes__title">Indigenous recipes you can make</h2>
+      <p class="suggested-recipes__intro">Based on your detected ingredients. Match = how many recipe ingredients you have.</p>
+      <div class="suggested-recipes__list">
+        ${suggestedRecipes.map(({ recipe, score, matchedIngredients }) => {
+          const pct = Math.round(score * 100);
+          const matched = (matchedIngredients || []).join(', ') || '—';
+          return `
+          <div class="suggested-recipe">
+            <div class="suggested-recipe__head">
+              <p class="suggested-recipe__name">${escapeHtml(recipe.name)}</p>
+              <button type="button" class="story-btn" data-recipe-id="${escapeHtml(recipe.id || '')}" data-recipe-name="${escapeHtml(recipe.name || '')}" aria-label="Listen to the story">Listen to the story</button>
+            </div>
+            <p class="suggested-recipe__culture">${escapeHtml(recipe.culture || '')}</p>
+            <p class="suggested-recipe__desc">${escapeHtml(recipe.description || '')}</p>
+            <p class="suggested-recipe__match">Match: ${pct}% — ${escapeHtml(matched)}</p>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
 function renderAnalysis(data) {
+  const ingredients = collectIngredients(data);
   let html = `URL: <a href="${escapeHtml(data.url)}" target="_blank">${escapeHtml(data.url)}</a>`;
 
   if (data.analysis) {
@@ -12,6 +58,8 @@ function renderAnalysis(data) {
   if (data.boundingBoxes?.length) {
     html += renderBoundingBoxes(data.boundingBoxes);
   }
+
+  html += renderSuggestedRecipes(data.suggestedRecipes || [], ingredients);
 
   html += renderRawResponse(data);
 

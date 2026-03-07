@@ -12,3 +12,38 @@ button { padding: 0.5rem 1rem; cursor: pointer; }
 .analysis--stacked { margin-top: 0.75rem; }
 .btn-3d { padding: 0.5rem 1rem; cursor: pointer; background: #2563eb; color: #fff; border: none; border-radius: 4px; font-size: 0.875rem; }
 .btn-3d:hover { background: #1d4ed8; }
+
+/* Suggested recipes */
+.suggested-recipes { margin-top: 1.5rem; padding: 1rem; background: #f7f2ea; border: 1px solid #d9cdb8; border-radius: 10px; font-size: 0.875rem; }
+.suggested-recipes__title { margin: 0 0 0.25rem; font-size: 1rem; color: #2D4A35; }
+.suggested-recipes__intro { margin: 0 0 0.75rem; color: #666; font-size: 0.8rem; }
+.suggested-recipes__list { display: flex; flex-direction: column; gap: 0.75rem; }
+.suggested-recipe { background: #fff; border: 1px solid #e4ddd2; border-radius: 8px; padding: 0.75rem 1rem; }
+.suggested-recipe__head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.2rem; }
+.suggested-recipe__name { font-weight: 700; font-size: 0.9rem; margin: 0; }
+.suggested-recipe__culture { font-size: 0.8rem; color: #666; margin: 0.2rem 0; }
+.suggested-recipe__desc { font-size: 0.85rem; margin: 0.25rem 0; line-height: 1.4; }
+.suggested-recipe__match { font-size: 0.8rem; color: #2D4A35; margin: 0.35rem 0 0; }
+.story-btn { font-size: 0.8rem; font-weight: 600; color: #2D4A35; background: #f0ebe0; border: 1px solid #d9cdb8; border-radius: 6px; padding: 0.35rem 0.6rem; cursor: pointer; }
+.story-btn:hover { background: #2D4A35; color: #fff; border-color: #2D4A35; }
+
+/* Story modal */
+.story-modal { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; visibility: hidden; transition: opacity 0.2s ease, visibility 0.2s ease; }
+.story-modal--open { opacity: 1; visibility: visible; }
+.story-modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); cursor: pointer; }
+.story-modal__box { position: relative; max-width: 420px; width: 100%; background: #fff; border-radius: 12px; box-shadow: 0 8px 40px rgba(0,0,0,0.15); padding: 1.5rem; border: 1px solid #e4ddd2; }
+.story-modal__close { position: absolute; top: 0.75rem; right: 0.75rem; width: 2rem; height: 2rem; font-size: 1.5rem; line-height: 1; color: #666; background: none; border: none; cursor: pointer; border-radius: 6px; }
+.story-modal__close:hover { color: #111; background: #eee; }
+.story-modal__title { font-size: 1.1rem; color: #2D4A35; margin: 0 0 1rem; padding-right: 2rem; }
+.story-modal__character { margin-bottom: 1rem; min-height: 100px; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #f7f2ea 0%, #ede0c4 100%); border-radius: 8px; }
+.story-character__figure { position: relative; width: 80px; height: 100px; }
+.story-character__head { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 44px; height: 44px; border-radius: 50%; background: #2D4A35; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.story-character__body { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 64px; height: 52px; border-radius: 32px 32px 16px 16px; background: #3d6347; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.story-character__sound { position: absolute; top: 50%; left: 100%; width: 24px; height: 24px; margin-left: 8px; opacity: 0; background: radial-gradient(circle, #e8a96a 0%, #C8813A 100%); border-radius: 50%; transform: translateY(-50%) scale(0.5); transition: opacity 0.15s, transform 0.15s; }
+.story-character--speaking .story-character__sound { opacity: 1; transform: translateY(-50%) scale(1); animation: story-pulse 0.6s ease-in-out infinite; }
+.story-character--speaking .story-character__head { animation: story-nod 1.2s ease-in-out infinite; }
+@keyframes story-pulse { 0%, 100% { transform: translateY(-50%) scale(1); opacity: 1; } 50% { transform: translateY(-50%) scale(1.15); opacity: 0.85; } }
+@keyframes story-nod { 0%, 100% { transform: translateX(-50%) rotate(0deg); } 25% { transform: translateX(-50%) rotate(-2deg); } 75% { transform: translateX(-50%) rotate(2deg); } }
+.story-modal__status { font-size: 0.85rem; color: #666; margin-bottom: 0.75rem; min-height: 1.25em; }
+.story-modal__status--error { color: #b53c3c; }
+.story-modal__audio { width: 100%; height: 40px; border-radius: 6px; }
