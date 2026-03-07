@@ -1,20 +1,28 @@
 const express = require('express');
-const { generateModel } = require('../services/rodin');
-
 const router = express.Router();
 
+/**
+ * POST /api/generate3d
+ * Body: { boundingBoxes: Array<{name, confidence}> }
+ * Returns: { ingredients: Array<{name, confidence}> }
+ */
 router.post('/', express.json(), async (req, res) => {
-  const { imageUrl } = req.body;
-  if (!imageUrl) {
-    return res.status(400).json({ error: 'imageUrl is required' });
+  const { boundingBoxes } = req.body;
+
+  if (!boundingBoxes?.length) {
+    return res.status(400).json({ error: 'boundingBoxes array is required' });
   }
 
   try {
-    const result = await generateModel(imageUrl);
-    res.json(result);
+    const ingredients = boundingBoxes.map(({ name, confidence }) => ({
+      name: name.toLowerCase().trim(),
+      confidence,
+    }));
+
+    res.json({ ingredients });
   } catch (err) {
     console.error('[generate3d]', err);
-    res.status(500).json({ error: err.message || '3D generation failed' });
+    res.status(500).json({ error: err.message || 'Failed to process ingredients' });
   }
 });
 

@@ -953,6 +953,64 @@ body {
 .ar-btn-next { background: var(--ochre); color: white; }
 .ar-btn-next:hover { background: var(--ochre-light); }
 
+/* ── SCREEN: 3D KITCHEN ──────────────────────────── */
+.screen-kitchen3d {
+  background: #0a0a0a;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+#kitchen3d-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#kitchen3d-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.kitchen3d-overlay {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.kitchen3d-btn {
+  padding: 8px 14px;
+  border: 1px solid rgba(200,129,58,0.4);
+  background: rgba(28,28,28,0.85);
+  color: var(--cream);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  backdrop-filter: blur(8px);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.kitchen3d-btn:hover {
+  background: rgba(200,129,58,0.25);
+}
+
+.kitchen3d-btn--active {
+  background: var(--ochre);
+  border-color: var(--ochre);
+  color: #fff;
+}
+
+.kitchen3d-btn--active:hover {
+  background: var(--ochre-light);
+}
+
 /* ── SCREEN 7: STORY ─────────────────────────────── */
 .screen-story {
   background: var(--charcoal);

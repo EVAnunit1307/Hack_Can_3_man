@@ -73,8 +73,21 @@
       AkiRender.renderStory(data);
       AkiRender.renderWord(data);
 
-      // Navigate to detection result
-      AkiApp.goTo('detect');
+      // Navigate: 3D mode goes straight to kitchen, normal mode goes to detect
+      if (AkiApp.state.mode3d) {
+        AkiApp.state.mode3d = false;
+        AkiApp.goTo('kitchen3d');
+        // Wait for layout so container has dimensions before Three.js init
+        requestAnimationFrame(() => {
+          const container = document.getElementById('kitchen3d-container');
+          if (container && window.handleGenerate3d) {
+            const bboxes = data.boundingBoxes || [];
+            window.handleGenerate3d(data.imageUrl || '', bboxes, container);
+          }
+        });
+      } else {
+        AkiApp.goTo('detect');
+      }
 
     } catch (err) {
       showError(err.message || 'Something went wrong. Please try again.');

@@ -12,12 +12,13 @@ const AkiApp = (() => {
   const state = {
     selectedNation: 'Anishinaabe',
     uploadData:     null,   // raw API response from /api/upload
+    mode3d:         false,  // when true, upload goes straight to 3D kitchen
     activeRecipe:   null,   // { recipe, score, matchedIngredients }
     currentScreen:  'splash',
   };
 
   // ── Screen map ─────────────────────────────────────────────────────────────
-  const SCREENS = ['splash','nation','upload','detect','recipe','ar','story','word'];
+  const SCREENS = ['splash','nation','upload','detect','recipe','ar','story','word','kitchen3d'];
 
   // Screens that show the bottom nav
   const NAV_SCREENS = new Set(['upload','detect','recipe','ar','story','word']);
@@ -129,6 +130,10 @@ const AkiApp = (() => {
     // Splash
     $('btn-start-scan')?.addEventListener('click', () => goTo('nation'));
     $('btn-explore-recipes')?.addEventListener('click', () => goTo('recipe'));
+    $('btn-3d-kitchen')?.addEventListener('click', () => {
+      state.mode3d = true;
+      document.getElementById('file-input')?.click();
+    });
 
     // Nation
     $('btn-nation-continue')?.addEventListener('click', () => goTo('upload'));
@@ -150,6 +155,9 @@ const AkiApp = (() => {
       goTo('recipe');
     });
     $('ar-btn-story')?.addEventListener('click', () => goTo('story'));
+
+    // 3D Kitchen
+    $('btn-kitchen3d-back')?.addEventListener('click', () => goTo('splash'));
 
     // Word screen
     $('btn-word-scan')?.addEventListener('click', () => {

@@ -1,6 +1,12 @@
 /* ── Reset ─────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* 3D scene */
+#scene-container { width: 100%; height: 600px; border-radius: 8px; overflow: hidden; margin-top: 1rem; }
+#scene-container canvas { display: block; width: 100%; height: 100%; }
+.scene-info { margin-top: 0.75rem; font-size: 0.875rem; }
+.scene-info__hint { color: #666; font-size: 0.8rem; margin-top: 0.25rem; }
+
 /* ── Aki brand tokens ──────────────────────────────────────────────────── */
 :root {
   --ochre:        #C8813A;

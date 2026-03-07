@@ -26,6 +26,7 @@ app.use((req, _res, next) => {
 
 // ── Static frontend ──────────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
 
 // ── API routes ───────────────────────────────────────────────────────────────
 app.use('/api/upload', uploadRoute);
