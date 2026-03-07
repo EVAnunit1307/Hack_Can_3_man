@@ -136,7 +136,7 @@ body {
   letter-spacing: 4px;
   text-transform: uppercase;
   color: var(--ochre);
-  margin-bottom: 48px;
+  margin-bottom: 20px;
 }
 
 .splash-tagline {
@@ -145,7 +145,63 @@ body {
   font-size: 20px;
   color: rgba(245,236,215,0.7);
   line-height: 1.5;
-  margin-bottom: 60px;
+  margin-bottom: 0;
+}
+
+/* ── 3D Title Card ──────────────────────────────── */
+.title-card-3d {
+  position: relative;
+  transform-style: preserve-3d;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(200,129,58,0.3);
+  padding: 40px 28px 32px;
+  margin-bottom: 36px;
+  will-change: transform;
+  cursor: default;
+  overflow: hidden;
+  animation: card-float 5s ease-in-out infinite;
+}
+
+.title-card-3d.is-tilting {
+  animation: none;
+  transition: transform 0.08s linear;
+}
+
+@keyframes card-float {
+  0%, 100% { transform: perspective(800px) translateY(0px)   rotateX(0deg)   rotateY(0deg); }
+  25%       { transform: perspective(800px) translateY(-5px)  rotateX(1.5deg) rotateY(-1deg); }
+  75%       { transform: perspective(800px) translateY(-8px)  rotateX(-1deg)  rotateY(1.5deg); }
+}
+
+.title-card-3d__shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.12) 0%, transparent 65%);
+  pointer-events: none;
+  transition: background 0.08s linear;
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+.title-card-3d__geo {
+  position: absolute;
+  right: -30px;
+  bottom: -30px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,129,58,0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.title-card-3d .aki-wordmark,
+.title-card-3d .aki-subtitle,
+.title-card-3d .splash-tagline {
+  position: relative;
+  z-index: 2;
 }
 
 /* ── BUTTONS ─────────────────────────────────────── */
