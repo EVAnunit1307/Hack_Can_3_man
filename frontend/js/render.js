@@ -1,78 +1,212 @@
+/* global CookingAR, escapeHtml */
+'use strict';
+
+// ── Main render entry ────────────────────────────────────────────────────────
 function renderAnalysis(data) {
-  let html = `URL: <a href="${escapeHtml(data.url)}" target="_blank">${escapeHtml(data.url)}</a>`;
+  const ingredients = collectIngredients(data);
+  const summary     = data.analysis?.summary || '';
+  const indigenous  = data.analysis?.indigenousContext || null;
+  const recipes     = data.analysis?.recipes || [];
+  const nutrition   = data.analysis?.nutritionNotes || null;
 
-  if (data.analysis) {
-    html += renderGeminiAnalysis(data.analysis);
+  return `
+    <div class="result-card" role="region" aria-label="Analysis results">
+
+      <div class="result-media">
+
+        <!-- Left: uploaded photo -->
+        <div class="result-photo">
+          <img
+            id="ar-image"
+            src="${escapeHtml(data.url)}"
+            crossorigin="anonymous"
+            alt="Uploaded ingredient photo"
+            loading="eager"
+          />
+          <span class="result-photo__label">Your photo</span>
+        </div>
+
+        <!-- Right: 3D viewer -->
+        <div class="ar-viewer" id="ar-wrapper" aria-label="3D ingredient preview">
+          <span class="ar-viewer__label">3D Preview</span>
+          <div class="ar-loading" id="ar-loading">
+            <div class="spinner"></div>
+            Generating 3D…
+          </div>
+        </div>
+
+      </div>
+
+      ${ingredients.length ? `
+      <div class="result-info">
+        <p class="result-info__heading">Detected ingredients</p>
+        <div class="ingredient-chips">
+          ${ingredients.map(i => `
+            <span class="chip">
+              ${escapeHtml(i.name)}
+              ${i.conf ? `<span class="chip__conf">${i.conf}%</span>` : ''}
+            </span>`).join('')}
+        </div>
+      </div>` : ''}
+
+      ${renderIndigenousContext(indigenous, recipes, nutrition)}
+
+      ${summary ? `
+      <div class="result-summary">
+        <strong>AI overview —</strong> ${escapeHtml(summary)}
+      </div>` : ''}
+
+    </div>`;
+}
+
+// ── Indigenous context section ────────────────────────────────────────────────
+function renderIndigenousContext(ctx, recipes, nutrition) {
+  // Only render if we have at least one meaningful field
+  const hasCtx      = ctx && (
+    ctx.traditionalNames?.length ||
+    ctx.culturalUses?.length ||
+    ctx.traditionalPreparations?.length ||
+    ctx.seasonality ||
+    ctx.culturalSignificance
+  );
+  const hasRecipes   = recipes?.length > 0;
+  const hasNutrition = !!nutrition;
+
+  if (!hasCtx && !hasRecipes && !hasNutrition) return '';
+
+  return `
+    <div class="indigenous-section">
+      <div class="indigenous-section__header">
+        <span class="indigenous-section__icon" aria-hidden="true">🌿</span>
+        <h2 class="indigenous-section__title">Indigenous Food Knowledge</h2>
+      </div>
+
+      ${hasCtx ? `
+      <div class="indigenous-grid">
+
+        ${ctx.traditionalNames?.length ? `
+        <div class="ig-card">
+          <p class="ig-card__label">Traditional Names</p>
+          <ul class="ig-names-list">
+            ${ctx.traditionalNames.map(n => `
+              <li><span class="ig-nation">${escapeHtml(n.nation)}</span> — <em>${escapeHtml(n.name)}</em></li>
+            `).join('')}
+          </ul>
+        </div>` : ''}
+
+        ${ctx.culturalUses?.length ? `
+        <div class="ig-card">
+          <p class="ig-card__label">Cultural Uses</p>
+          <ul class="ig-list">
+            ${ctx.culturalUses.map(u => `<li>${escapeHtml(u)}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        ${ctx.traditionalPreparations?.length ? `
+        <div class="ig-card">
+          <p class="ig-card__label">Traditional Preparations</p>
+          <ul class="ig-list">
+            ${ctx.traditionalPreparations.map(p => `<li>${escapeHtml(p)}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        ${ctx.seasonality ? `
+        <div class="ig-card ig-card--inline">
+          <p class="ig-card__label">Seasonality</p>
+          <p class="ig-card__text">${escapeHtml(ctx.seasonality)}</p>
+        </div>` : ''}
+
+        ${ctx.culturalSignificance ? `
+        <div class="ig-card ig-card--inline ig-card--significance">
+          <p class="ig-card__label">Cultural Significance</p>
+          <p class="ig-card__text">${escapeHtml(ctx.culturalSignificance)}</p>
+        </div>` : ''}
+
+      </div>` : ''}
+
+      ${hasRecipes ? `
+      <div class="ig-recipes">
+        <p class="ig-card__label">Traditional Recipes</p>
+        <div class="ig-recipe-list">
+          ${recipes.map(r => `
+            <div class="ig-recipe">
+              <p class="ig-recipe__name">${escapeHtml(r.name)}</p>
+              <p class="ig-recipe__desc">${escapeHtml(r.description)}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>` : ''}
+
+      ${hasNutrition ? `
+      <div class="ig-nutrition">
+        <span class="ig-nutrition__icon" aria-hidden="true">🍃</span>
+        <p>${escapeHtml(nutrition)}</p>
+      </div>` : ''}
+
+    </div>`;
+}
+
+// ── Collect + deduplicate ingredients from all sources ────────────────────────
+function collectIngredients(data) {
+  const seen = new Set();
+  const out  = [];
+
+  // 1. Cloudinary LVIS bounding boxes (most precise)
+  for (const b of (data.boundingBoxes || [])) {
+    const name = (b.name || '').toLowerCase();
+    if (!seen.has(name)) {
+      seen.add(name);
+      out.push({ name, conf: b.confidence ? Math.round(b.confidence * 100) : null });
+    }
   }
 
-  if (data.contentAnalysis) {
-    html += renderContentAnalysis(data.contentAnalysis);
+  // 2. Cloudinary content analysis food detections
+  for (const f of (data.contentAnalysis?.foodDetected || [])) {
+    const name = ((typeof f === 'object' ? f.label : f) || '').toLowerCase();
+    if (name && !seen.has(name)) {
+      seen.add(name);
+      out.push({ name, conf: f.confidence ? Math.round(f.confidence * 100) : null });
+    }
   }
+
+  // 3. Gemini detected objects
+  for (const obj of (data.analysis?.detectedObjects || [])) {
+    const name = (obj || '').toLowerCase();
+    if (name && !seen.has(name)) {
+      seen.add(name);
+      out.push({ name, conf: null });
+    }
+  }
+
+  return out;
+}
+
+// ── Mount AR ──────────────────────────────────────────────────────────────────
+function mountAR(data) {
+  if (data.mediaType !== 'image') return;
+  const wrapper = document.getElementById('ar-wrapper');
+  const img     = document.getElementById('ar-image');
+  if (!wrapper || !img) return;
+
+  // Best detection: bbox → food detected → gemini object → fallback
+  let detection = null;
 
   if (data.boundingBoxes?.length) {
-    html += renderBoundingBoxes(data.boundingBoxes);
+    detection = data.boundingBoxes[0];
   }
 
-  html += renderRawResponse(data);
-
-  if (data.analysisError) {
-    html += `<p class="error" style="margin-top:0.5rem;">Analysis: ${escapeHtml(data.analysisError)}</p>`;
+  if (!detection) {
+    const foods = data.contentAnalysis?.foodDetected;
+    const first = Array.isArray(foods) && foods.length
+      ? (typeof foods[0] === 'object' ? foods[0].label : foods[0])
+      : null;
+    if (first) detection = { name: first, x: 0.1, y: 0.1, w: 0.8, h: 0.8, confidence: 1 };
   }
 
-  return html;
-}
-
-function renderGeminiAnalysis(a) {
-  let html = '<div class="analysis"><h2>Analysis</h2>';
-  if (a.summary) html += `<p><strong>Summary:</strong> ${escapeHtml(a.summary)}</p>`;
-  if (a.keyEvents?.length) html += renderList('Key events', a.keyEvents);
-  if (a.timestamps?.length) {
-    html += '<p><strong>Timestamps:</strong></p><ul>'
-      + a.timestamps.map(t => `<li>${escapeHtml(t.time || '')} – ${escapeHtml(t.description || '')}</li>`).join('')
-      + '</ul>';
+  if (!detection) {
+    const obj  = data.analysis?.detectedObjects?.[0] || 'ingredient';
+    detection  = { name: obj, x: 0.1, y: 0.1, w: 0.8, h: 0.8, confidence: 1 };
   }
-  if (a.detectedObjects?.length) html += renderList('Detected', a.detectedObjects);
-  if (a.notableActions?.length) html += renderList('Notable actions', a.notableActions);
-  html += '</div>';
-  return html;
-}
 
-function renderContentAnalysis(c) {
-  let html = '<div class="analysis analysis--stacked"><h2>Content analysis (LVIS ingredients &amp; scene)</h2>';
-  if (c.error) {
-    html += `<p class="error">${escapeHtml(c.error)}</p>`;
-  } else {
-    if (c.foodDetected?.length) html += `<p><strong>Detected ingredients &amp; items:</strong> ${escapeHtml(c.foodDetected.join(', '))}</p>`;
-    if (c.caption) html += `<p><strong>Description:</strong> ${escapeHtml(c.caption)}</p>`;
-    if (!c.foodDetected?.length && !c.caption) html += '<p>No ingredients or caption returned.</p>';
-  }
-  html += '</div>';
-  return html;
-}
-
-function renderBoundingBoxes(boxes) {
-  let html = '<div class="analysis analysis--stacked"><h2>Bounding Boxes (LVIS)</h2><ul>';
-  for (const box of boxes) {
-    html += '<li><strong>' + escapeHtml(box.name) + '</strong>'
-      + ` (${(box.confidence * 100).toFixed(1)}%)`
-      + ` [x:${box.x.toFixed(1)} y:${box.y.toFixed(1)} w:${box.w.toFixed(1)} h:${box.h.toFixed(1)}]`
-      + (box.categories?.length ? ' — ' + escapeHtml(box.categories.join(', ')) : '')
-      + '</li>';
-  }
-  html += '</ul></div>';
-  return html;
-}
-
-function renderRawResponse(data) {
-  return '<div class="analysis analysis--stacked">'
-    + '<h2>Full API Response</h2>'
-    + '<pre style="white-space:pre-wrap;word-break:break-all;font-size:0.75rem;max-height:400px;overflow:auto;">'
-    + escapeHtml(JSON.stringify(data, null, 2))
-    + '</pre></div>';
-}
-
-function renderList(title, items) {
-  return `<p><strong>${title}:</strong></p><ul>`
-    + items.map(item => `<li>${escapeHtml(item)}</li>`).join('')
-    + '</ul>';
+  CookingAR.mount(wrapper, img, detection);
 }

@@ -1,12 +1,463 @@
-* { box-sizing: border-box; }
-body { font-family: system-ui, sans-serif; max-width: 32rem; margin: 2rem auto; padding: 0 1rem; }
-h1 { font-size: 1.25rem; }
-input[type="file"] { margin: 0.5rem 0; display: block; }
-button { padding: 0.5rem 1rem; cursor: pointer; }
-.url { margin-top: 1rem; word-break: break-all; font-size: 0.875rem; color: #333; }
-.error { color: #c00; }
-.analysis { margin-top: 1.5rem; padding: 1rem; background: #f5f5f5; border-radius: 6px; font-size: 0.875rem; }
-.analysis h2 { margin: 0 0 0.5rem; font-size: 1rem; }
-.analysis ul { margin: 0.25rem 0; padding-left: 1.25rem; }
-.analysis p { margin: 0.5rem 0; }
-.analysis--stacked { margin-top: 0.75rem; }
+/* ── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Aki brand tokens ──────────────────────────────────────────────────── */
+:root {
+  --ochre:        #C8813A;
+  --ochre-dark:   #a86630;
+  --ochre-light:  #e8a96a;
+  --green:        #2D4A35;
+  --green-light:  #3d6347;
+  --cream:        #F5ECD7;
+  --cream-dark:   #ede0c4;
+  --charcoal:     #1C1C1C;
+  --muted:        #6b6458;
+  --panel-bg:     #111318;
+  --card-bg:      #ffffff;
+  --border:       #e4ddd2;
+  --ig-bg:        #f7f2ea;
+  --ig-border:    #d9cdb8;
+  --radius:       14px;
+  --radius-sm:    8px;
+  --shadow:       0 4px 24px rgba(0,0,0,0.10);
+  --shadow-lg:    0 8px 40px rgba(0,0,0,0.14);
+  --transition:   0.18s ease;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--cream);
+  color: var(--charcoal);
+  min-height: 100vh;
+  padding: 0 1rem 3rem;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────── */
+.site-header {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2.25rem 0 1.75rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.site-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: -0.5px;
+}
+.site-header .tagline {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* ── Upload card ───────────────────────────────────────────────────────── */
+.upload-card {
+  max-width: 760px;
+  margin: 0 auto 2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+.upload-card label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+.upload-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+input[type="file"] {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  color: var(--charcoal);
+}
+.btn-primary {
+  padding: 0.65rem 1.5rem;
+  background: var(--ochre);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 2px 8px rgba(200,129,58,0.28);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--ochre-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(200,129,58,0.35);
+}
+.btn-primary:active:not(:disabled) { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ── Progress steps ─────────────────────────────────────────────────────── */
+.status-uploading {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.progress-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  opacity: 0.45;
+  transition: opacity 0.3s ease;
+}
+.progress-step--active {
+  opacity: 1;
+  color: var(--charcoal);
+  font-weight: 600;
+}
+.progress-step--done {
+  opacity: 0.6;
+  color: var(--green);
+}
+.progress-step--done .progress-step__dot::after {
+  content: '✓';
+  font-size: 0.78rem;
+  color: var(--green);
+}
+.progress-step--done .spinner { display: none; }
+.progress-step__dot {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Spinners ───────────────────────────────────────────────────────────── */
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--ochre);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+.spinner--faint {
+  border-top-color: var(--border);
+  animation: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Error ──────────────────────────────────────────────────────────────── */
+.status-error {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  background: #fff5f5;
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius);
+  color: #dc2626;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.status-error__icon { font-size: 1.1rem; }
+
+/* ── Result card ─────────────────────────────────────────────────────────── */
+.result-card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  animation: fadeSlideUp 0.38s ease both;
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Top media strip: photo + 3D viewer side by side */
+.result-media {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 280px;
+}
+@media (max-width: 540px) {
+  .result-media { grid-template-columns: 1fr; }
+  .result-photo,
+  .ar-viewer    { min-height: 220px; }
+}
+
+.result-photo {
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+.result-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.result-photo__label,
+.ar-viewer__label {
+  position: absolute;
+  top: 0.6rem; left: 0.6rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 99px;
+  pointer-events: none;
+}
+.result-photo__label {
+  background: rgba(0,0,0,0.52);
+  color: #fff;
+}
+.ar-viewer__label {
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.16);
+  color: rgba(255,255,255,0.78);
+}
+
+/* 3D viewer */
+.ar-viewer {
+  position: relative;
+  background: var(--panel-bg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+}
+.ar-canvas { display: block; width: 100%; height: 100%; }
+.ar-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.6rem;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.82rem;
+}
+.ar-loading .spinner {
+  border-color: rgba(255,255,255,0.15);
+  border-top-color: var(--ochre);
+}
+
+/* ── Detected ingredient chips ───────────────────────────────────────────── */
+.result-info {
+  padding: 1.25rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.result-info__heading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 0.65rem;
+}
+.ingredient-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.8rem;
+  background: var(--cream);
+  border: 1px solid #ddd5c8;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--charcoal);
+  text-transform: capitalize;
+  transition: background var(--transition), border-color var(--transition);
+}
+.chip:hover { background: var(--cream-dark); border-color: #c9bfaf; }
+.chip__conf {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* ── Indigenous context section ──────────────────────────────────────────── */
+.indigenous-section {
+  border-top: 1px solid var(--ig-border);
+  background: var(--ig-bg);
+  padding: 1.5rem;
+}
+.indigenous-section__header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+}
+.indigenous-section__icon { font-size: 1.25rem; }
+.indigenous-section__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -0.2px;
+}
+
+/* Grid of info cards */
+.indigenous-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+@media (max-width: 540px) {
+  .indigenous-grid { grid-template-columns: 1fr; }
+}
+
+.ig-card {
+  background: var(--card-bg);
+  border: 1px solid var(--ig-border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+}
+.ig-card--inline { grid-column: 1 / -1; }
+.ig-card--significance {
+  border-left: 3px solid var(--ochre);
+}
+.ig-card__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ochre);
+  margin-bottom: 0.5rem;
+}
+.ig-card__text {
+  font-size: 0.875rem;
+  color: var(--charcoal);
+  line-height: 1.6;
+}
+
+/* Traditional names list */
+.ig-names-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.ig-names-list li {
+  font-size: 0.875rem;
+  color: var(--charcoal);
+  line-height: 1.5;
+}
+.ig-nation {
+  font-weight: 600;
+  color: var(--green);
+}
+
+/* Bullet lists */
+.ig-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.ig-list li {
+  font-size: 0.875rem;
+  color: var(--charcoal);
+  line-height: 1.5;
+  padding-left: 1rem;
+  position: relative;
+}
+.ig-list li::before {
+  content: '·';
+  position: absolute;
+  left: 0.2rem;
+  color: var(--ochre);
+  font-weight: 700;
+}
+
+/* Recipes */
+.ig-recipes {
+  border-top: 1px solid var(--ig-border);
+  padding-top: 1.1rem;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+}
+.ig-recipe-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+}
+.ig-recipe {
+  background: var(--card-bg);
+  border: 1px solid var(--ig-border);
+  border-left: 3px solid var(--green);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+}
+.ig-recipe__name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--green);
+  margin-bottom: 0.25rem;
+}
+.ig-recipe__desc {
+  font-size: 0.85rem;
+  color: var(--charcoal);
+  line-height: 1.55;
+}
+
+/* Nutrition note */
+.ig-nutrition {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--ig-border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.ig-nutrition__icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+/* ── Gemini summary ──────────────────────────────────────────────────────── */
+.result-summary {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--charcoal);
+}
+.result-summary strong { color: var(--green); }

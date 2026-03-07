@@ -3,18 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video / Image Upload</title>
+  <meta name="description" content="Aki reconnects people with Indigenous food traditions. Upload an ingredient photo to discover traditional names, cultural uses, and recipes from Indigenous Nations.">
+  <meta name="theme-color" content="#2D4A35">
+  <title>Aki — Indigenous Food Reconnection</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
 </head>
 <body>
-  <h1>Upload video or image</h1>
-  <form id="uploadForm">
-    <input type="file" name="file" id="file" accept="video/*,image/*" required>
-    <button type="submit">Upload to Cloudinary</button>
-  </form>
-  <div id="result"></div>
+
+  <header class="site-header">
+    <h1>Aki</h1>
+    <span class="tagline">Indigenous food reconnection</span>
+  </header>
+
+  <main>
+    <section class="upload-card" aria-label="Upload ingredient photo">
+      <label for="file">Upload an ingredient photo</label>
+      <div class="upload-row">
+        <input type="file" id="file" name="file" accept="image/*,video/*" required>
+        <button class="btn-primary" type="button" id="uploadBtn">Analyse</button>
+      </div>
+    </section>
+
+    <div id="result" role="region" aria-live="polite" aria-label="Analysis results"></div>
+  </main>
 
   <script src="js/utils.js"></script>
+  <script src="js/ar.js"></script>
   <script src="js/render.js"></script>
   <script src="js/upload.js"></script>
 </body>
