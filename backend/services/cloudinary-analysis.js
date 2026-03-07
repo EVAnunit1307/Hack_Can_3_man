@@ -5,6 +5,7 @@
  */
 
 const https = require('https');
+const { isFoodLabel } = require('./food-filter');
 
 const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
 const apiKey = process.env.CLOUDINARY_API_KEY;
@@ -68,7 +69,7 @@ function extractLvisLabels(lvisData) {
       if (name) labels.push(name);
     }
   }
-  return [...new Set(labels)];
+  return [...new Set(labels)].filter(isFoodLabel);
 }
 
 /**
