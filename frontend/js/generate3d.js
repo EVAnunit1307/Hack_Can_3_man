@@ -28,7 +28,7 @@ function initScene(container) {
   if (!gl) throw new Error('WebGL not available');
   renderer = new THREE.WebGLRenderer({ canvas, context: gl, antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // cap at 2x — mobile perf
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -547,7 +547,15 @@ const DEMO_PRESET_INGREDIENTS = [
 ];
 
 function launchDemoKitchen(container) {
-  handleGenerate3d('', DEMO_PRESET_INGREDIENTS, container);
+  // Wait for the kitchen3d screen to finish layout before measuring container size
+  function tryLaunch() {
+    if (container.clientWidth > 0 && container.clientHeight > 0) {
+      handleGenerate3d('', DEMO_PRESET_INGREDIENTS, container);
+    } else {
+      setTimeout(tryLaunch, 50);
+    }
+  }
+  tryLaunch();
 }
 
 // Expose to global scope for upload.js and app.js
