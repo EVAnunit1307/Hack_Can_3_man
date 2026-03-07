@@ -1,4 +1,4 @@
-/* global THREE, escapeHtml */
+/* global THREE, escapeHtml, INGREDIENT_POSITIONS */
 'use strict';
 
 const ASSETS_PATH = '/assets/3d';
@@ -15,6 +15,7 @@ const DEFAULT_SCALE = 0.5;
 let scene, camera, renderer, orbitControls, transformControls;
 let ingredientMeshes = [];
 let selectedObject = null;
+let positionPanel = null;
 
 function initScene(container) {
   scene = new THREE.Scene();
@@ -126,9 +127,20 @@ function initScene(container) {
   function animate() {
     requestAnimationFrame(animate);
     orbitControls.update();
+    updatePositionPanel();
     renderer.render(scene, camera);
   }
   animate();
+}
+
+function updatePositionPanel() {
+  if (!positionPanel) return;
+  var lines = ingredientMeshes.map(function (mesh) {
+    var label = mesh.userData.slotName || mesh.userData.ingredientName || '?';
+    var p = mesh.position;
+    return label + ':  x: ' + p.x.toFixed(4) + ',  y: ' + p.y.toFixed(4) + ',  z: ' + p.z.toFixed(4);
+  });
+  positionPanel.textContent = lines.join('\n');
 }
 
 function selectObject(obj) {
@@ -264,16 +276,32 @@ async function handleGenerate3d(imageUrl, boundingBoxes, container) {
     // Load kitchen
     await loadKitchen();
 
-    // Place ingredients on counter
-    const spacing = 0.8;
-    const baseX = -2.0;
-    const counterY = 3.1;
-    const counterZ = 0.5;
+    // Place ingredients on counter using named slots from INGREDIENT_POSITIONS
+    const typeCounts = {};
+    const fallbackSpacing = 0.8;
+    const fallbackBaseX = -2.0;
+    const fallbackY = 3.1;
+    const fallbackZ = 0.5;
+    let fallbackIndex = 0;
 
     await Promise.all(
-      ingredients.map((ing, i) => {
-        const pos = new THREE.Vector3(baseX + i * spacing, counterY, counterZ);
-        return loadIngredient(ing.name, pos);
+      ingredients.map((ing) => {
+        const name = ing.name.toLowerCase().trim();
+        typeCounts[name] = (typeCounts[name] || 0) + 1;
+        const slotName = name + '_' + typeCounts[name];
+        const slot = INGREDIENT_POSITIONS[slotName];
+
+        let pos;
+        if (slot) {
+          pos = new THREE.Vector3(slot.x, slot.y, slot.z);
+        } else {
+          pos = new THREE.Vector3(fallbackBaseX + fallbackIndex * fallbackSpacing, fallbackY, fallbackZ);
+          fallbackIndex++;
+        }
+
+        return loadIngredient(ing.name, pos).then(function (mesh) {
+          mesh.userData.slotName = slotName;
+        });
       })
     );
 
@@ -344,6 +372,15 @@ async function handleGenerate3d(imageUrl, boundingBoxes, container) {
       btnRow.appendChild(scaleBtn);
 
       overlay.appendChild(btnRow);
+
+      // Live position panel
+      positionPanel = document.createElement('pre');
+      positionPanel.style.cssText =
+        'margin-top:12px;padding:8px 10px;background:rgba(0,0,0,0.55);color:#0f0;' +
+        'font-family:monospace;font-size:11px;border-radius:6px;max-height:160px;' +
+        'overflow-y:auto;white-space:pre;line-height:1.5;';
+      overlay.appendChild(positionPanel);
+      updatePositionPanel();
     }
 
     // Enable orbit + set default transform mode
