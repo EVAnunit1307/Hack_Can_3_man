@@ -42,6 +42,7 @@ app.get('/api/health', (_req, res) => {
     services: {
       cloudinary:  !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET),
       gemini:      !!process.env.GEMINI_API_KEY,
+      elevenlabs:  !!(process.env.ELEVENLABS_API_KEY || process.env.ELEVEN_LABS_API_KEY),
       huggingface: !!(process.env.HF_TOKEN || process.env.REACT_APP_HF_TOKEN),
     },
   });

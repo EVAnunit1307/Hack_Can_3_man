@@ -22,6 +22,7 @@ const CookingGuide = (() => {
   let _autoAdvanceTimer = null;
   let _countdownStart   = null;
   let _audioCtx     = null;
+  let _stepAudio    = null;  // ElevenLabs TTS for current step
   let _lastFrame    = 0;
   let _initialized  = false;
   let _isXR         = false;
@@ -172,6 +173,37 @@ const CookingGuide = (() => {
   const _chime       = () => _tone([440],               0.07, 0.32, 0.26);
   const _chimeFinale = () => _tone([440, 554.4, 659.3],  0.07, 1.80, 0.26);
 
+  /** Speak the step instruction via ElevenLabs (e.g. "Cube the squash"). */
+  function _speakStep(step) {
+    if (!step || !step.title) return;
+    if (_stepAudio) {
+      _stepAudio.pause();
+      _stepAudio = null;
+    }
+    const text = step.title.trim();
+    if (!text) return;
+    const url = `/api/tts?text=${encodeURIComponent(text)}`;
+    fetch(url)
+      .then(function (res) {
+        if (!res.ok) return res.json().then(function (body) { throw new Error(body.error || res.statusText); });
+        return res.arrayBuffer();
+      })
+      .then(function (buf) {
+        const blob = new Blob([buf], { type: 'audio/mpeg' });
+        const blobUrl = URL.createObjectURL(blob);
+        const audio = new Audio(blobUrl);
+        _stepAudio = audio;
+        audio.onended = function () { URL.revokeObjectURL(blobUrl); _stepAudio = null; };
+        audio.onerror = function () { URL.revokeObjectURL(blobUrl); _stepAudio = null; };
+        return audio.play();
+      })
+      .then(function () {})
+      .catch(function (err) {
+        _stepAudio = null;
+        console.warn('[CookingGuide] TTS failed:', err.message, '— Try clicking "Listen" after tapping the page.');
+      });
+  }
+
   // ── DOM Overlay ───────────────────────────────────────────────────────────
   const _CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
@@ -203,7 +235,10 @@ const CookingGuide = (() => {
 .cg-prog-fill { height:100%; background:#C8813A; transition:width .5s cubic-bezier(.4,0,.2,1); }
 .cg-content   { padding:13px 15px 11px; }
 .cg-phase     { font-size:9.5px; font-weight:700; letter-spacing:.10em; text-transform:uppercase; color:#C8813A; margin-bottom:4px; }
-.cg-title     { font-family:'Playfair Display',serif; font-size:21px; font-weight:700; color:#1A0E04; line-height:1.2; margin-bottom:8px; }
+.cg-title-row  { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+.cg-title      { font-family:'Playfair Display',serif; font-size:21px; font-weight:700; color:#1A0E04; line-height:1.2; flex:1; min-width:0; }
+.cg-btn-listen { flex-shrink:0; font-size:11px; padding:6px 10px; border-radius:8px; border:1px solid rgba(74,53,32,.25); background:#FEFBF5; color:#5C2A0E; cursor:pointer; font-family:inherit; }
+.cg-btn-listen:hover { background:#F5EDE0; }
 .cg-body-text { font-size:12.5px; line-height:1.65; color:#4A3520; margin-bottom:7px; }
 .cg-tip       { font-size:11.5px; line-height:1.55; color:#7A5530; font-style:italic;
                  border-left:2.5px solid #C8813A; padding-left:9px; margin-bottom:11px; }
@@ -258,7 +293,10 @@ const CookingGuide = (() => {
   <div class="cg-prog-wrap"><div class="cg-prog-fill" id="cg-prog-fill" style="width:0%"></div></div>
   <div class="cg-content">
     <div class="cg-phase"     id="cg-phase"></div>
-    <div class="cg-title"     id="cg-title"></div>
+    <div class="cg-title-row">
+      <div class="cg-title" id="cg-title"></div>
+      <button type="button" class="cg-btn-listen" id="cg-btn-listen" title="Hear this step">&#128266; Listen</button>
+    </div>
     <div class="cg-body-text" id="cg-body-text"></div>
     <div class="cg-tip"       id="cg-tip" style="display:none"></div>
     <div class="cg-btns">
@@ -272,6 +310,10 @@ const CookingGuide = (() => {
     _overlayEl = el;
     _q('#cg-btn-next').addEventListener('click', () => _nextStep());
     _q('#cg-btn-back').addEventListener('click', () => prev());
+    _q('#cg-btn-listen').addEventListener('click', () => {
+      const step = STEPS[_currentStep];
+      if (step) _speakStep(step);
+    });
     let tx0 = 0;
     el.addEventListener('touchstart', e => { tx0 = e.changedTouches[0].clientX; }, { passive: true });
     el.addEventListener('touchend',   e => {
@@ -855,6 +897,9 @@ const CookingGuide = (() => {
       if (ring) ring.style.display = 'block';
       _autoAdvanceTimer = setTimeout(() => _nextStep(), step.duration * 1000);
     }
+
+    // Speak step out loud (ElevenLabs)
+    _speakStep(step);
   }
 
   function _renderStep(idx, skipFade) {
@@ -1007,6 +1052,7 @@ const CookingGuide = (() => {
 
   function reset() {
     if (_autoAdvanceTimer) { clearTimeout(_autoAdvanceTimer); _autoAdvanceTimer = null; }
+    if (_stepAudio) { _stepAudio.pause(); _stepAudio = null; }
     _clearLights(); _returnAllIngredients(); _setAnimType('none', null);
     _currentStep = 0; _countdownStart = null;
     _destroyOverlay(); _buildOverlay();
@@ -1017,6 +1063,7 @@ const CookingGuide = (() => {
     if (!_initialized) return;
     if (_animId) { cancelAnimationFrame(_animId); _animId = null; }
     if (_autoAdvanceTimer) { clearTimeout(_autoAdvanceTimer); _autoAdvanceTimer = null; }
+    if (_stepAudio) { _stepAudio.pause(); _stepAudio = null; }
     _clearLights(); _clearParticles(); _returnAllIngredients();
     _destroyOverlay();
 

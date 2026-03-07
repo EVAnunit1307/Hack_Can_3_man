@@ -58,7 +58,7 @@ router.post('/', multerUpload.single('file'), async (req, res) => {
   const preset = getDemoPreset(req.file.originalname);
   if (preset) {
     try {
-      const { url, publicId } = await uploadToCloudinary(localPath);
+      const { url, publicId, thumbnailUrl, posterUrl } = await uploadToCloudinary(localPath);
       cleanup();
       const contentAnalysis = {
         caption: preset.caption,
@@ -69,6 +69,8 @@ router.post('/', multerUpload.single('file'), async (req, res) => {
       return res.json({
         url,
         publicId,
+        thumbnailUrl,
+        posterUrl,
         mediaType: 'image',
         analysis: null,
         analysisError: null,
@@ -85,7 +87,7 @@ router.post('/', multerUpload.single('file'), async (req, res) => {
 
   try {
     // 1. Upload to Cloudinary (also triggers LVIS detection)
-    const { url, publicId, boundingBoxes } = await uploadToCloudinary(localPath);
+    const { url, publicId, boundingBoxes, thumbnailUrl, posterUrl } = await uploadToCloudinary(localPath);
     cleanup();
 
     const mediaType = (req.file.mimetype || '').startsWith('video/') ? 'video' : 'image';
@@ -126,6 +128,8 @@ router.post('/', multerUpload.single('file'), async (req, res) => {
     return res.json({
       url,
       publicId,
+      thumbnailUrl,
+      posterUrl,
       mediaType,
       analysis,
       analysisError,

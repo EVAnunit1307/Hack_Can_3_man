@@ -50,14 +50,21 @@ const AkiRender = (() => {
 
   // ── SCREEN 4: Detection ───────────────────────────────────────────────────
   function renderDetection(data, file) {
-    // Show uploaded photo
+    // Show uploaded photo: prefer Cloudinary thumbnail (fast, works after refresh), else blob
     const img    = document.getElementById('detect-img');
     const holder = document.getElementById('detect-placeholder');
-    if (img && file) {
-      const url = URL.createObjectURL(file);
-      img.src            = url;
-      img.style.display  = 'block';
-      if (holder) holder.style.display = 'none';
+    if (img) {
+      const url = (data.mediaType === 'video' && data.posterUrl) ? data.posterUrl
+        : (data.thumbnailUrl || data.url);
+      if (url) {
+        img.src            = url;
+        img.style.display  = 'block';
+        if (holder) holder.style.display = 'none';
+      } else if (file) {
+        img.src            = URL.createObjectURL(file);
+        img.style.display  = 'block';
+        if (holder) holder.style.display = 'none';
+      }
     }
 
     // Primary detected ingredient

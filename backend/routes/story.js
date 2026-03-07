@@ -45,4 +45,22 @@ router.get('/story', (req, res) => {
   res.json({ title: entry.title, script: entry.script });
 });
 
+// Short instruction TTS for cooking guide (e.g. "Cube the squash")
+const TTS_MAX_CHARS = 300;
+router.get('/tts', async (req, res) => {
+  const raw = (req.query.text || '').trim();
+  if (!raw) return res.status(400).json({ error: 'Missing text' });
+  const text = raw.slice(0, TTS_MAX_CHARS);
+  console.log('[tts] request:', text.slice(0, 50) + (text.length > 50 ? '...' : ''));
+  try {
+    const audioBuffer = await textToSpeech(text);
+    console.log('[tts] ok, bytes:', audioBuffer.length);
+    res.set({ 'Content-Type': 'audio/mpeg', 'Content-Length': audioBuffer.length });
+    res.send(audioBuffer);
+  } catch (err) {
+    console.error('[tts] error:', err.message);
+    res.status(500).json({ error: err.message || 'TTS failed' });
+  }
+});
+
 module.exports = router;
