@@ -2,7 +2,7 @@
  *
  * Renders a stylized top-down view of Canada silhouette with
  * glowing territory zones for each nation. Hover → pulse gold.
- * Click → select nation and call back into AkiApp.
+ * Click → select nation and call back into KinKitchenApp.
  *
  * Public API:
  *   NationMap3d.mount(containerEl, onSelectCallback)

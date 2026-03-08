@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────
-   aki-ui.css  —  New premium design system for Aki
+   kin-kitchen-ui.css  —  Design system for Kin Kitchen
    Sits alongside the original styles.css.
    ───────────────────────────────────────────────────── */
 
@@ -121,7 +121,7 @@ body {
   max-width: 360px;
 }
 
-.aki-wordmark {
+.kk-wordmark {
   font-family: 'Playfair Display', serif;
   font-size: 88px;
   font-weight: 400;
@@ -131,7 +131,7 @@ body {
   margin-bottom: 8px;
 }
 
-.aki-subtitle {
+.kk-subtitle {
   font-size: 11px;
   letter-spacing: 4px;
   text-transform: uppercase;
@@ -197,8 +197,8 @@ body {
   z-index: 0;
 }
 
-.title-card-3d .aki-wordmark,
-.title-card-3d .aki-subtitle,
+.title-card-3d .kk-wordmark,
+.title-card-3d .kk-subtitle,
 .title-card-3d .splash-tagline {
   position: relative;
   z-index: 2;
@@ -589,20 +589,20 @@ body {
 }
 
 /* Progress steps (upload) */
-.aki-progress {
+.kk-progress {
   padding: 24px;
   background: var(--cream);
   border-radius: 4px;
   margin-bottom: 24px;
 }
 
-.aki-progress__steps {
+.kk-progress__steps {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.aki-progress__step {
+.kk-progress__step {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -610,9 +610,9 @@ body {
   color: var(--text-muted);
 }
 
-.aki-progress__step.aki-progress__step--active { color: var(--charcoal); }
-.aki-progress__step.aki-progress__step--done { color: var(--forest); }
-.aki-progress__step.aki-progress__step--done .aki-progress__dot::after {
+.kk-progress__step.kk-progress__step--active { color: var(--charcoal); }
+.kk-progress__step.kk-progress__step--done { color: var(--forest); }
+.kk-progress__step.kk-progress__step--done .kk-progress__dot::after {
   content: '✓';
   font-size: 12px;
   color: var(--forest);
@@ -623,7 +623,7 @@ body {
   height: 100%;
 }
 
-.aki-progress__dot {
+.kk-progress__dot {
   width: 24px; height: 24px;
   border-radius: 50%;
   background: var(--cream-dark);
@@ -633,9 +633,9 @@ body {
   justify-content: center;
 }
 
-.aki-progress__step--active .aki-progress__dot { background: var(--ochre); }
+.kk-progress__step--active .kk-progress__dot { background: var(--ochre); }
 
-.aki-error {
+.kk-error {
   background: rgba(181,60,60,0.08);
   border: 1px solid rgba(181,60,60,0.3);
   border-radius: 4px;
@@ -1157,14 +1157,14 @@ body {
 .step-ar-btn:hover { background: rgba(200,129,58,0.1); }
 
 /* Suggested recipes mini-list */
-.aki-recipe-suggestions {
+.kk-recipe-suggestions {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-bottom: 32px;
 }
 
-.aki-recipe-sug {
+.kk-recipe-sug {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1177,17 +1177,17 @@ body {
   transition: all 0.15s;
 }
 
-.aki-recipe-sug:hover { border-color: var(--ochre); background: rgba(200,129,58,0.04); }
-.aki-recipe-sug--selected { border-color: var(--ochre); background: rgba(200,129,58,0.08); box-shadow: 0 0 0 2px rgba(200,129,58,0.2); }
+.kk-recipe-sug:hover { border-color: var(--ochre); background: rgba(200,129,58,0.04); }
+.kk-recipe-sug--selected { border-color: var(--ochre); background: rgba(200,129,58,0.08); box-shadow: 0 0 0 2px rgba(200,129,58,0.2); }
 
-.aki-recipe-sug__left {
+.kk-recipe-sug__left {
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
 }
 
-.aki-recipe-sug__build {
+.kk-recipe-sug__build {
   flex-shrink: 0;
   font-family: 'DM Sans', sans-serif;
   font-size: 11px;
@@ -1202,11 +1202,11 @@ body {
   transition: background 0.15s, transform 0.1s;
   white-space: nowrap;
 }
-.aki-recipe-sug__build:hover { background: #A06228; }
-.aki-recipe-sug__build:active { transform: scale(0.94); }
+.kk-recipe-sug__build:hover { background: #A06228; }
+.kk-recipe-sug__build:active { transform: scale(0.94); }
 
-.aki-recipe-sug__name { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--charcoal); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.aki-recipe-sug__match { flex-shrink: 0; font-size: 11px; color: var(--ochre); letter-spacing: 1px; font-weight: 600; }
+.kk-recipe-sug__name { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--charcoal); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kk-recipe-sug__match { flex-shrink: 0; font-size: 11px; color: var(--ochre); letter-spacing: 1px; font-weight: 600; }
 
 /* ── SCREEN 6: AR ─────────────────────────────────── */
 .screen-ar {
@@ -2205,7 +2205,7 @@ body {
      --glow-start   : current angle (degrees) of the arc start
      --glow-active  : 0 (hidden) or 1 (visible)
 
-   Colours are Aki-themed:
+   Colours are Kin Kitchen-themed:
      ochre (#C8813A), ochre-light (#E8A55A),
      forest (#2D4A35), forest-light (#3D6148), cream (#F5ECD7)
    ───────────────────────────────────────────────────── */
@@ -2245,7 +2245,7 @@ body {
   /* Transparent border so the gradient shows through only within it */
   border: 1px solid transparent;
 
-  /* Aki-themed gradient — matches ochre/forest/cream palette */
+  /* Kin Kitchen-themed gradient — matches ochre/forest/cream palette */
   background:
     radial-gradient(circle,            #C8813A 10%, #C8813A00 20%),
     radial-gradient(circle at 40% 40%, #E8A55A  5%, #E8A55A00 15%),
@@ -2436,7 +2436,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   HERO3D SPLASH  —  ports GrowthSync Hero3D layout to Aki
+   HERO3D SPLASH  —  ports GrowthSync Hero3D layout to Kin Kitchen
    ═══════════════════════════════════════════════════════════ */
 
 /* ── Splash container: full-screen, dark base ─────────────── */

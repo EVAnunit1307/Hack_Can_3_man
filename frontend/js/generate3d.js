@@ -367,7 +367,7 @@ async function handleGenerate3d(imageUrl, boundingBoxes, container, publicId) {
     orbitControls.update();
 
     // Populate sidebar recipe info
-    const activeRec = window.AkiApp && window.AkiApp.state && window.AkiApp.state.activeRecipe && window.AkiApp.state.activeRecipe.recipe;
+    const activeRec = window.KinKitchenApp && window.KinKitchenApp.state && window.KinKitchenApp.state.activeRecipe && window.KinKitchenApp.state.activeRecipe.recipe;
     const nationEl = document.getElementById('k3d-nation');
     const titleEl  = document.getElementById('k3d-title');
     const descEl   = document.getElementById('k3d-desc');

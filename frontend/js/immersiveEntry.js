@@ -1,4 +1,4 @@
-/* immersiveEntry.js — Animated Three.js background for the Aki splash screen
+/* immersiveEntry.js — Animated Three.js background for the Kin Kitchen splash screen
  *
  * Creates a full-screen WebGL canvas behind the splash content with:
  *   - Floating golden firefly particles orbiting the centre
@@ -274,8 +274,8 @@ const ImmersiveEntry = (() => {
       container.requestFullscreen().catch(() => {});
     }
     // Switch to 3D kitchen as the immersive fallback
-    if (window.AkiApp) {
-      window.AkiApp.goTo('kitchen3d');
+    if (window.KinKitchenApp) {
+      window.KinKitchenApp.goTo('kitchen3d');
       requestAnimationFrame(() => {
         const c = document.getElementById('kitchen3d-container');
         if (c && window.launchDemoKitchen) window.launchDemoKitchen(c);

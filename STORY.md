@@ -1,4 +1,4 @@
-# Our Story — Aki
+# Our Story — Kin Kitchen
 
 *What inspired us, what we learned, how we built it, and the challenges we faced.*
 
@@ -8,7 +8,7 @@
 
 We wanted to help people **reconnect with Indigenous foodways**—not as a history lesson, but as something you can do in your own kitchen. So many of us are disconnected from where our food comes from and from the knowledge that Indigenous cultures have carried for generations.
 
-We were inspired by the **Three Sisters** (squash, beans, corn) and by the idea that a photo of your counter could become a doorway: to Ojibwe names, to traditional recipes, and to a guided cooking experience that feels both modern (AI, 3D, voice) and rooted. We built Aki so that *"what's in my kitchen?"* leads to *"how do I cook this with respect and care?"*
+We were inspired by the **Three Sisters** (squash, beans, corn) and by the idea that a photo of your counter could become a doorway: to Ojibwe names, to traditional recipes, and to a guided cooking experience that feels both modern (AI, 3D, voice) and rooted. We built Kin Kitchen so that *"what's in my kitchen?"* leads to *"how do I cook this with respect and care?"*
 
 ---
 

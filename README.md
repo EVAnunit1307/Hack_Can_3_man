@@ -1,6 +1,6 @@
-# Aki — Indigenous Food Reconnection
+# Kin Kitchen — Indigenous Food Reconnection
 
-Aki reconnects people with Indigenous food traditions through AI-powered ingredient recognition, traditional recipes, and immersive 3D/AR experiences. Upload a photo or video of your kitchen or ingredients; the app identifies food, surfaces Indigenous context (e.g. Ojibwe names, cultural uses), suggests recipes from an Indigenous recipes dataset, and guides you through cooking in a step-by-step 3D kitchen with voice (say “next” or “continue”) and TTS.
+Kin Kitchen reconnects people with Indigenous food traditions through AI-powered ingredient recognition, traditional recipes, and immersive 3D/AR experiences. Upload a photo or video of your kitchen or ingredients; the app identifies food, surfaces Indigenous context (e.g. Ojibwe names, cultural uses), suggests recipes from an Indigenous recipes dataset, and guides you through cooking in a step-by-step 3D kitchen with voice (say “next” or “continue”) and TTS.
 
 ---
 
@@ -8,7 +8,7 @@ Aki reconnects people with Indigenous food traditions through AI-powered ingredi
 
 ### What inspired us
 
-We wanted to help people reconnect with Indigenous foodways—not as a history lesson, but as something you can do in your own kitchen. So many of us are disconnected from where our food comes from and from the knowledge that Indigenous cultures have carried for generations. We were inspired by the Three Sisters (squash, beans, corn) and by the idea that a photo of your counter could become a doorway: to Ojibwe names, to traditional recipes, and to a guided cooking experience that feels both modern (AI, 3D, voice) and rooted. We built Aki so that "what's in my kitchen?" leads to "how do I cook this with respect and care?"
+We wanted to help people reconnect with Indigenous foodways—not as a history lesson, but as something you can do in your own kitchen. So many of us are disconnected from where our food comes from and from the knowledge that Indigenous cultures have carried for generations. We were inspired by the Three Sisters (squash, beans, corn) and by the idea that a photo of your counter could become a doorway: to Ojibwe names, to traditional recipes, and to a guided cooking experience that feels both modern (AI, 3D, voice) and rooted. We built Kin Kitchen so that "what's in my kitchen?" leads to "how do I cook this with respect and care?"
 
 ### What we learned
 
@@ -58,7 +58,7 @@ Open `http://localhost:3000`. Upload an image (or use a demo filename like `thre
 
 | Layer | Technology | Purpose |
 |-------|------------|--------|
-| **Markup / UI** | HTML5, CSS3 | Single-page app: splash, nation picker, upload, detection, recipe, AR, story, word, 3D kitchen. Styles: `styles.css`, `aki-ui.css`. |
+| **Markup / UI** | HTML5, CSS3 | Single-page app: splash, nation picker, upload, detection, recipe, AR, story, word, 3D kitchen. Styles: `styles.css`, `kin-kitchen-ui.css`. |
 | **Fonts** | Google Fonts (Playfair Display, DM Sans) | Typography. |
 | **Runtime** | Vanilla JavaScript (ES5+ strict) | Navigation (`app.js`), upload (`upload.js`), renderers (`render.js`), story (`story.js`). |
 | **3D** | Three.js (r150+) | 3D kitchen: GLB meshes, OrbitControls, TransformControls, `xrCompatible: true` for WebXR. |
@@ -127,11 +127,11 @@ video-analyzer/
 │   └── uploads/
 ├── frontend/
 │   ├── index.html
-│   ├── styles.css, aki-ui.css
+│   ├── styles.css, kin-kitchen-ui.css
 │   └── js/
-│       ├── app.js           # AkiApp: goTo(), state, nation, nav
+│       ├── app.js           # KinKitchenApp: goTo(), state, nation, nav
 │       ├── upload.js        # POST /api/upload, progress, 3D vs detect
-│       ├── render.js        # AkiRender: renderDetection, renderRecipe, renderStory, renderWord
+│       ├── render.js        # KinKitchenRender: renderDetection, renderRecipe, renderStory, renderWord
 │       ├── generate3d.js    # Three.js scene, GLBs, CookingGuide, WebXR
 │       ├── cookingGuide.js  # 8-step overlay, TTS, voice “next/continue”
 │       ├── ingredientPositions.js
@@ -149,7 +149,7 @@ video-analyzer/
 
 **splash** → nation → **upload** → **detect** → **recipe** | **ar** | **story** | **word** | **kitchen3d**
 
-- `AkiApp.state.uploadData` holds the last `/api/upload` response.
+- `KinKitchenApp.state.uploadData` holds the last `/api/upload` response.
 - **kitchen3d**: `handleGenerate3d(imageUrl, boundingBoxes, container)` builds the scene and mounts CookingGuide (8 steps, voice, Listen).
 
 ---
@@ -162,7 +162,7 @@ video-analyzer/
 2. Frontend: `POST /api/upload` (FormData).
 3. Backend: Multer → optional demo preset (e.g. `threesisters`) or Cloudinary upload + Gemini analyze + recipe-matcher.
 4. Response: `url`, `analysis`, `boundingBoxes`, `suggestedRecipes`, `thumbnailUrl`, `posterUrl`.
-5. Frontend: store in `AkiApp.state.uploadData`, render screens, then `goTo('detect')` or `goTo('kitchen3d')` + `handleGenerate3d(...)`.
+5. Frontend: store in `KinKitchenApp.state.uploadData`, render screens, then `goTo('detect')` or `goTo('kitchen3d')` + `handleGenerate3d(...)`.
 
 ### 3D kitchen & cooking guide
 
@@ -226,4 +226,4 @@ video-analyzer/
 
 ---
 
-This README documents the tech stack and architecture of Aki. For product/design overview, add a short “About Aki” section at the top if needed.
+This README documents the tech stack and architecture of Kin Kitchen. For product/design overview, add a short “About Kin Kitchen” section at the top if needed.

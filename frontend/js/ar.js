@@ -713,9 +713,9 @@ const CookingAR = (() => {
       if (spr.position.z > bestZ) { bestZ = spr.position.z; bestIdx = i; }
     });
     const label = _orbitLabels[bestIdx];
-    if (label && window.AkiApp) {
+    if (label && window.KinKitchenApp) {
       const audio = document.getElementById('detect-audio');
-      if (audio) AkiApp.speakText(label.text, audio);
+      if (audio) KinKitchenApp.speakText(label.text, audio);
     }
   }
 

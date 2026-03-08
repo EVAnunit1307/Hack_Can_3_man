@@ -5,7 +5,7 @@
  * Tracks mouse position and draws a rotating conic-gradient border
  * that follows the cursor around any element with class "glowing-card".
  *
- * Colours are matched to the Aki theme:
+ * Colours are matched to the Kin Kitchen theme:
  *   ochre (#C8813A), ochre-light (#E8A55A), forest (#2D4A35),
  *   forest-light (#3D6148), cream (#F5ECD7)
  *

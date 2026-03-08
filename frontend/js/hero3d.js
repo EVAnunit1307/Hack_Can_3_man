@@ -1,4 +1,4 @@
-/* hero3d.js — Full-screen Hero 3D village scene for Aki splash
+/* hero3d.js — Full-screen Hero 3D village scene for Kin Kitchen splash
  *
  * Loads the Vietnamese village drone 3D scan as a background:
  *  - Preserves original photorealistic drone-scan textures

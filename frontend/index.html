@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Aki reconnects people with Indigenous food traditions through AI-powered ingredient recognition and traditional recipes.">
+<meta name="description" content="Kin Kitchen reconnects people with Indigenous food traditions through AI-powered ingredient recognition and traditional recipes.">
 <meta name="theme-color" content="#1C1C1C">
-<title>Aki — Indigenous Food Reconnection</title>
+<title>Kin Kitchen — Indigenous Food Reconnection</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="aki-ui.css">
+<link rel="stylesheet" href="kin-kitchen-ui.css">
 </head>
 <body>
 
@@ -37,7 +37,7 @@
     <div class="hero-content">
       <!-- Brand header -->
       <div class="hero-brand">
-        <span class="hero-brand__name">Aki</span>
+        <span class="hero-brand__name">Kin Kitchen</span>
         <span class="hero-brand__dot">·</span>
         <span class="hero-brand__sub">Ojibwe · Earth · Land</span>
       </div>
@@ -131,24 +131,24 @@
           <button class="uc-gallery-btn" id="btn-camera-roll">🖼 Choose from gallery</button>
 
           <!-- Upload progress (hidden until upload starts) -->
-          <div class="aki-progress" id="upload-progress" style="display:none">
-            <div class="aki-progress__steps">
-              <div class="aki-progress__step aki-progress__step--active" id="pstep-1">
-                <div class="aki-progress__dot"><div class="spinner"></div></div>
+          <div class="kk-progress" id="upload-progress" style="display:none">
+            <div class="kk-progress__steps">
+              <div class="kk-progress__step kk-progress__step--active" id="pstep-1">
+                <div class="kk-progress__dot"><div class="spinner"></div></div>
                 <span>Uploading…</span>
               </div>
-              <div class="aki-progress__step" id="pstep-2">
-                <div class="aki-progress__dot"><div class="spinner spinner--faint"></div></div>
+              <div class="kk-progress__step" id="pstep-2">
+                <div class="kk-progress__dot"><div class="spinner spinner--faint"></div></div>
                 <span>Analysing…</span>
               </div>
-              <div class="aki-progress__step" id="pstep-3">
-                <div class="aki-progress__dot"><div class="spinner spinner--faint"></div></div>
+              <div class="kk-progress__step" id="pstep-3">
+                <div class="kk-progress__dot"><div class="spinner spinner--faint"></div></div>
                 <span>Finding recipes…</span>
               </div>
             </div>
           </div>
 
-          <div id="upload-error" class="aki-error" style="display:none" role="alert"></div>
+          <div id="upload-error" class="kk-error" style="display:none" role="alert"></div>
           <button class="btn-secondary" id="btn-upload-retry" style="display:none;width:100%;margin-top:12px;justify-content:center;">Try again</button>
 
           <div class="uc-tips">
@@ -252,7 +252,7 @@
       <!-- Suggested recipes — select one, then Cook in 3D -->
       <div id="recipe-suggestions-wrap" style="display:none">
         <div class="recipe-section-label">More recipes you can make</div>
-        <div id="recipe-suggestions-list" class="aki-recipe-suggestions"></div>
+        <div id="recipe-suggestions-list" class="kk-recipe-suggestions"></div>
         <button class="btn-full btn-primary" id="btn-enter-kitchen3d" style="margin-top:16px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px"><path d="M2 8h20v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8z"/><path d="M7 8V6a5 5 0 0 1 10 0v2"/></svg>
           Cook this in 3D

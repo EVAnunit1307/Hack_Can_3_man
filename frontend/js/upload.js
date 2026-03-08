@@ -1,9 +1,9 @@
-/* global AkiApp, AkiRender, escapeHtml */
+/* global KinKitchenApp, KinKitchenRender, escapeHtml */
 'use strict';
 
 /**
  * upload.js — handles file selection + POST /api/upload
- * Works with the new 8-screen UI via AkiApp.goTo() and AkiRender.*
+ * Works with the new 8-screen UI via KinKitchenApp.goTo() and KinKitchenRender.*
  */
 (() => {
   let _fileInput  = null;
@@ -16,9 +16,9 @@
     STEPS.forEach((id, i) => {
       const el = document.getElementById(id);
       if (!el) return;
-      el.classList.remove('aki-progress__step--active','aki-progress__step--done');
-      if (i < index)  el.classList.add('aki-progress__step--done');
-      if (i === index) el.classList.add('aki-progress__step--active');
+      el.classList.remove('kk-progress__step--active','kk-progress__step--done');
+      if (i < index)  el.classList.add('kk-progress__step--done');
+      if (i === index) el.classList.add('kk-progress__step--active');
       const spinner = el.querySelector('.spinner');
       if (spinner) spinner.classList.toggle('spinner--faint', i !== index);
     });
@@ -66,19 +66,19 @@
       await new Promise(r => setTimeout(r, 80));
 
       _uploadData = data;
-      AkiApp.state.uploadData = data;
+      KinKitchenApp.state.uploadData = data;
 
       // Populate all downstream screens
       showProgress(false);
-      AkiRender.renderDetection(data, file);
-      AkiRender.renderRecipe(data);
-      AkiRender.renderStory(data);
-      AkiRender.renderWord(data);
+      KinKitchenRender.renderDetection(data, file);
+      KinKitchenRender.renderRecipe(data);
+      KinKitchenRender.renderStory(data);
+      KinKitchenRender.renderWord(data);
 
       // Navigate: 3D mode goes straight to kitchen, normal mode goes to detect
-      if (AkiApp.state.mode3d) {
-        AkiApp.state.mode3d = false;
-        AkiApp.goTo('kitchen3d');
+      if (KinKitchenApp.state.mode3d) {
+        KinKitchenApp.state.mode3d = false;
+        KinKitchenApp.goTo('kitchen3d');
         requestAnimationFrame(() => {
           const container = document.getElementById('kitchen3d-container');
           if (container && window.handleGenerate3d) {
@@ -96,7 +96,7 @@
           }
         });
       } else {
-        AkiApp.goTo('detect');
+        KinKitchenApp.goTo('detect');
       }
 
     } catch (err) {

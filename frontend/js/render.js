@@ -1,17 +1,17 @@
-/* global escapeHtml, AkiApp */
+/* global escapeHtml, KinKitchenApp */
 'use strict';
 
 /**
- * render.js — AkiRender
+ * render.js — KinKitchenRender
  * Populates the 5 dynamic screens from the /api/upload response.
  *
  * Called by upload.js after a successful upload:
- *   AkiRender.renderDetection(data, file)
- *   AkiRender.renderRecipe(data)
- *   AkiRender.renderStory(data)
- *   AkiRender.renderWord(data)
+ *   KinKitchenRender.renderDetection(data, file)
+ *   KinKitchenRender.renderRecipe(data)
+ *   KinKitchenRender.renderStory(data)
+ *   KinKitchenRender.renderWord(data)
  */
-const AkiRender = (() => {
+const KinKitchenRender = (() => {
 
   // ── Ingredient emoji map ───────────────────────────────────────────────────
   const EMOJIS = {
@@ -104,8 +104,8 @@ const AkiRender = (() => {
       const ctx  = data.analysis?.indigenousContext;
       const rows = [];
       if (ctx?.seasonality)          rows.push(['tag-forest', ctx.seasonality]);
-      if (AkiApp.state.selectedNation !== 'All')
-                                     rows.push(['tag-ochre', AkiApp.state.selectedNation]);
+      if (KinKitchenApp.state.selectedNation !== 'All')
+                                     rows.push(['tag-ochre', KinKitchenApp.state.selectedNation]);
       if (ctx?.culturalUses?.length) rows.push(['tag-cream', ctx.culturalUses[0]]);
 
       tags.innerHTML = rows.map(([cls, txt]) =>
@@ -151,7 +151,7 @@ const AkiRender = (() => {
     const primaryRec   = primaryMatch?.recipe || null;
 
     // Hero section
-    const nation     = primaryRec?.culture || ctx?.culturalSignificance && AkiApp.state.selectedNation || '–';
+    const nation     = primaryRec?.culture || ctx?.culturalSignificance && KinKitchenApp.state.selectedNation || '–';
     const titleOjib  = geminiRec?.name || primaryRec?.name || '–';
     const titleEng   = geminiRec?.description || primaryRec?.description || '';
 
@@ -189,7 +189,7 @@ const AkiRender = (() => {
         ingListEl.addEventListener('click', e => {
           const row = e.target.closest('.ingredient-row-clickable');
           if (!row || !row.dataset.ingredient) return;
-          const data = AkiApp.state.uploadData;
+          const data = KinKitchenApp.state.uploadData;
           if (data && data.publicId) showIngredientLabel(data.publicId, row.dataset.ingredient);
         });
       }
@@ -235,19 +235,19 @@ const AkiRender = (() => {
     // More recipes list — include primary; select one then "Cook this in 3D" appears below
     const sugWrap   = document.getElementById('recipe-suggestions-wrap');
     const sugList   = document.getElementById('recipe-suggestions-list');
-    const currentId = (AkiApp.state.activeRecipe?.recipe?.id || primaryMatch?.recipe?.id) || '';
+    const currentId = (KinKitchenApp.state.activeRecipe?.recipe?.id || primaryMatch?.recipe?.id) || '';
 
     if (suggested.length && sugWrap && sugList) {
-      if (!AkiApp.state.activeRecipe && primaryMatch) AkiApp.state.activeRecipe = primaryMatch;
+      if (!KinKitchenApp.state.activeRecipe && primaryMatch) KinKitchenApp.state.activeRecipe = primaryMatch;
 
       sugList.innerHTML = suggested.slice(0, 5).map(({ recipe, score }) => {
         const isSelected = (recipe.id || '') === currentId;
-        return `<div class="aki-recipe-sug${isSelected ? ' aki-recipe-sug--selected' : ''}" data-recipe-id="${escapeHtml(recipe.id || '')}">
-          <div class="aki-recipe-sug__left">
-            <button class="aki-recipe-sug__build" data-recipe-id="${escapeHtml(recipe.id || '')}" title="Cook this in 3D">Build →</button>
-            <span class="aki-recipe-sug__name">${escapeHtml(recipe.name)}</span>
+        return `<div class="kk-recipe-sug${isSelected ? ' kk-recipe-sug--selected' : ''}" data-recipe-id="${escapeHtml(recipe.id || '')}">
+          <div class="kk-recipe-sug__left">
+            <button class="kk-recipe-sug__build" data-recipe-id="${escapeHtml(recipe.id || '')}" title="Cook this in 3D">Build →</button>
+            <span class="kk-recipe-sug__name">${escapeHtml(recipe.name)}</span>
           </div>
-          <span class="aki-recipe-sug__match">${Math.round(score * 100)}% match</span>
+          <span class="kk-recipe-sug__match">${Math.round(score * 100)}% match</span>
         </div>`;
       }).join('');
       sugWrap.style.display = '';
@@ -256,18 +256,18 @@ const AkiRender = (() => {
         sugList.dataset.recipeSelectListener = '1';
         sugList.addEventListener('click', e => {
           // Build button → select + immediately enter kitchen
-          const buildBtn = e.target.closest('.aki-recipe-sug__build');
+          const buildBtn = e.target.closest('.kk-recipe-sug__build');
           if (buildBtn) {
             e.stopPropagation();
             const recId = buildBtn.dataset.recipeId;
-            const found = AkiApp.state.uploadData?.suggestedRecipes?.find(s => s.recipe.id === recId);
+            const found = KinKitchenApp.state.uploadData?.suggestedRecipes?.find(s => s.recipe.id === recId);
             if (found) {
-              AkiApp.state.activeRecipe = found;
+              KinKitchenApp.state.activeRecipe = found;
               _set('recipe-title-ojibwe',  found.recipe.name);
               _set('recipe-title-english', found.recipe.description);
               _set('recipe-nation',        found.recipe.culture);
-              sugList.querySelectorAll('.aki-recipe-sug').forEach(el => {
-                el.classList.toggle('aki-recipe-sug--selected', el.dataset.recipeId === recId);
+              sugList.querySelectorAll('.kk-recipe-sug').forEach(el => {
+                el.classList.toggle('kk-recipe-sug--selected', el.dataset.recipeId === recId);
               });
               document.getElementById('btn-enter-kitchen3d')?.click();
             }
@@ -275,18 +275,18 @@ const AkiRender = (() => {
           }
 
           // Card click → select recipe
-          const item = e.target.closest('.aki-recipe-sug');
+          const item = e.target.closest('.kk-recipe-sug');
           if (!item) return;
           const recId = item.dataset.recipeId;
-          const uploadData = AkiApp.state.uploadData;
+          const uploadData = KinKitchenApp.state.uploadData;
           const found = uploadData?.suggestedRecipes?.find(s => s.recipe.id === recId);
           if (found) {
-            AkiApp.state.activeRecipe = found;
+            KinKitchenApp.state.activeRecipe = found;
             _set('recipe-title-ojibwe',  found.recipe.name);
             _set('recipe-title-english', found.recipe.description);
             _set('recipe-nation',        found.recipe.culture);
-            sugList.querySelectorAll('.aki-recipe-sug').forEach(el => {
-              el.classList.toggle('aki-recipe-sug--selected', el.dataset.recipeId === recId);
+            sugList.querySelectorAll('.kk-recipe-sug').forEach(el => {
+              el.classList.toggle('kk-recipe-sug--selected', el.dataset.recipeId === recId);
             });
           }
         });
@@ -316,18 +316,18 @@ const AkiRender = (() => {
     _set('story-body', body);
 
     // Eyebrow
-    const nation = AkiApp.state.selectedNation !== 'All'
-      ? `${AkiApp.state.selectedNation} teaching`
+    const nation = KinKitchenApp.state.selectedNation !== 'All'
+      ? `${KinKitchenApp.state.selectedNation} teaching`
       : 'The teaching behind the recipe';
     _set('story-eyebrow', nation);
 
     // Attribution
-    const nation2 = names?.[0]?.nation || AkiApp.state.selectedNation || '';
+    const nation2 = names?.[0]?.nation || KinKitchenApp.state.selectedNation || '';
     _set('story-attr-name', nation2 ? `Traditional knowledge · ${nation2}` : 'Indigenous foodways');
 
     // Land acknowledgment
     const land = names?.length
-      ? `Prepared on the traditional territory of the ${names[0].nation || AkiApp.state.selectedNation} peoples. This knowledge has been shared respectfully.`
+      ? `Prepared on the traditional territory of the ${names[0].nation || KinKitchenApp.state.selectedNation} peoples. This knowledge has been shared respectfully.`
       : '';
     _set('story-land', land);
 

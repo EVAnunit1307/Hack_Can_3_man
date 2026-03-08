@@ -2,13 +2,13 @@
 'use strict';
 
 /**
- * app.js — Aki screen navigation + app-level state machine
+ * app.js — Kin Kitchen screen navigation + app-level state machine
  *
  * Flow: splash → nation → upload → detect → recipe → kitchen3d → story
  *
- * State is kept in AkiApp.state. All screens read from and write to this.
+ * State is kept in KinKitchenApp.state. All screens read from and write to this.
  */
-const AkiApp = (() => {
+const KinKitchenApp = (() => {
   // ── App state ──────────────────────────────────────────────────────────────
   const state = {
     selectedNation: 'Anishinaabe',
@@ -275,7 +275,7 @@ const AkiApp = (() => {
       audioEl.src = URL.createObjectURL(blob);
       audioEl.play();
     } catch (e) {
-      console.log('[AkiApp] TTS not available:', e.message);
+      console.log('[KinKitchenApp] TTS not available:', e.message);
     }
   }
 
