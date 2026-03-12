@@ -1,4 +1,8 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '..', '.env') });
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: require('path').resolve(__dirname, '..', '.env') });
+
+}
+
 const path    = require('path');
 const express = require('express');
 
